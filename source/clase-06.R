@@ -21,10 +21,11 @@ df
 ##Crear una variable con la estatura en centímetros (1 pulgada = 2.54 centímetros):
 df$height_cm = df$height*2.54 ## agregar nueva variable
 df
-
+df$height_mt=df$height_cm/100
+df
 ### **2.3 mutate()**
 ## Generar una variable con la relación weight/height_cm:
-df = mutate(.data = df , weight_hcm = weight/height_cm)
+df = mutate(.data = df , weight_hcm = weight/height_cm, weight_hmt = weight/height_mt)
 head(x=df, n=5)
 
 ### **2.4 Generar variables usando condicionales:**
@@ -39,7 +40,8 @@ head(x=df, n=5)
 ## Generar una variable con categorías para la relación weight/height_cm.
 df = mutate(df , category = case_when(weight_hcm>=0.85 ~ "pesado" ,
                                       weight_hcm>=0.8 & weight_hcm<0.85 ~ "promedio" ,
-                                      weight_hcm<0.8 ~ "liviano"))
+                                      weight_hcm<0.8 & weight_hcm>=0.787~ "liviano", 
+                                      weight_hcm<0.787 ~ "muy liviano"))
 head(x=df, n=5)
 
 ### **2.5 Aplicar funciones a variables**
@@ -84,7 +86,7 @@ db
 ## La función `select()` permite seleccionar columnas de un dataframe o un tibble, usando el nombre o la posición de la variable en el conjunto de datos:
 db %>% select(c(1,3,5)) %>% head(n=3) 
 db %>% select(Petal.Length , Petal.Width , Species) %>% head(n=3)
-
+db %>% select(-Species) %>% head(n=3)
 #### **3.1.1 Seleccionar variables usando partes del nombre**
 ## Nombres de variable que empizan con (*Sepal*)
 db %>% select(starts_with("Sepal")) %>% head(n=3)
@@ -156,3 +158,9 @@ df <- as_tibble(df)
 df <- select(df, -cod_ase_)
 df <- mutate(df,ifelse(is.na(estrato),1,estrato))
 
+#copiar del 162-165 a un nuevo script como task e
+df <- import("https://www.datos.gov.co/resource/epsv-yhtj.csv") %>% 
+  as_tibble() %>%
+  select(-cod_ase_) %>%
+  mutate(ifelse(is.na(estrato),1,estrato))
+  
